@@ -12,6 +12,7 @@
     };
 
     function displayVideoInFancybox(target, config) {
+        target.addClass('fancybox.iframe');
         target.fancybox(config);
     };
 
