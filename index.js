@@ -22,5 +22,5 @@
         closeEffect: 'none'
     });
 
-    public.latestVideo = YouTubeLatestVideo.fetchFn(renderLatestVideo);
+    YouTubeLatestVideo.fetch('portadosfundos', renderLatestVideo);
 }(window, jQuery));

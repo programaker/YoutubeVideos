@@ -7,6 +7,10 @@
         return 'http://img.youtube.com/vi/'+ videoId +'/hqdefault.jpg';
     };
 
+    function channelVideoFeedUrl(channelName) {
+        return 'https://gdata.youtube.com/feeds/api/users/portadosfundos/uploads?max-results=1&orderby=published&v=2&alt=jsonc';
+    };
+
     function fetchLatestVideoFn(fn) {
         return function fetchLatestVideo(response) {
             if (response.data && response.data.items) {
@@ -23,12 +27,22 @@
         };
     };
 
-    function displayLatestVideoInFancybox(target, config) {
+    function fetch(channelName, fn) {
+        $.ajax({
+            url: channelVideoFeedUrl(channelName),
+            dataType: 'jsonp',
+            jsonp: 'callback',
+            success: fetchLatestVideoFn(fn)
+        });
+    };
+
+    function displayVideoInFancybox(target, config) {
         target.fancybox(config);
     };
 
+
     public.YouTubeLatestVideo = {
-        fetchFn: fetchLatestVideoFn,
-        displayInLightbox: displayLatestVideoInFancybox
+        displayInLightbox: displayVideoInFancybox,
+        fetch: fetch
     };
 }(window, jQuery));
