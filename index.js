@@ -1,14 +1,14 @@
 (function indexPageModule(public, $) {
-    var YouTubeLatestVideo = public.YouTubeLatestVideo;
+    var YouTubeVideos = public.YouTubeVideos;
     var videoLink = $('#video-link');
     var videoThumb = $('#video-thumb');
 
-    function renderLatestVideo(latestVideo) {
+    function renderVideo(latestVideo) {
         videoLink.attr('href', latestVideo.videoUrl);
         videoThumb.attr('src', latestVideo.videoThumbnailUrl);
     };
 
-    YouTubeLatestVideo.displayInLightbox(videoLink, {
+    YouTubeVideos.displayInLightbox(videoLink, {
         closeBtn: false,
         padding: 0,
         maxWidth: 800,
@@ -22,5 +22,5 @@
         closeEffect: 'none'
     });
 
-    YouTubeLatestVideo.fetch('portadosfundos', renderLatestVideo);
+    YouTubeVideos.fetchLatestFromChannel('portadosfundos', renderVideo);
 }(window, jQuery));

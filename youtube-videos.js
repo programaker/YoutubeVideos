@@ -1,4 +1,4 @@
-(function youtubeLatestVideoModule(public, $) {
+(function youtubeVideosModule(public, $) {
     function videoUrl(videoId) {
         return 'http://www.youtube.com/embed/'+ videoId +'?autoplay=1';
     };
@@ -9,6 +9,19 @@
 
     function channelVideoFeedUrl(channelName) {
         return 'https://gdata.youtube.com/feeds/api/users/portadosfundos/uploads?max-results=1&orderby=published&v=2&alt=jsonc';
+    };
+
+    function displayVideoInFancybox(target, config) {
+        target.fancybox(config);
+    };
+
+    function fetchLatestFromChannel(channelName, fn) {
+        $.ajax({
+            url: channelVideoFeedUrl(channelName),
+            dataType: 'jsonp',
+            jsonp: 'callback',
+            success: fetchLatestVideoFn(fn)
+        });
     };
 
     function fetchLatestVideoFn(fn) {
@@ -27,22 +40,9 @@
         };
     };
 
-    function fetch(channelName, fn) {
-        $.ajax({
-            url: channelVideoFeedUrl(channelName),
-            dataType: 'jsonp',
-            jsonp: 'callback',
-            success: fetchLatestVideoFn(fn)
-        });
-    };
 
-    function displayVideoInFancybox(target, config) {
-        target.fancybox(config);
-    };
-
-
-    public.YouTubeLatestVideo = {
+    public.YouTubeVideos = {
         displayInLightbox: displayVideoInFancybox,
-        fetch: fetch
+        fetchLatestFromChannel: fetchLatestFromChannel
     };
 }(window, jQuery));
