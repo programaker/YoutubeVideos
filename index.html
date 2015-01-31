@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Youtube Latest Video</title>
+    <link rel="stylesheet" href="fancybox/source/jquery.fancybox.css?v=2.1.5" type="text/css" media="screen" />
+</head>
+<body>
+    <a href="" id="video-link" class="fancybox.iframe" target="_blank">
+        <img id="video-thumb" src="" width="180" height="135"/>
+    </a>
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+    <script type="text/javascript" src="youtube-latest-video.js"></script>
+    <script type="text/javascript" src="index.js"></script>
+    
+    <script type="text/javascript" src="https://gdata.youtube.com/feeds/api/users/portadosfundos/uploads?max-results=1&orderby=published&v=2&alt=jsonc&callback=latestVideo"></script>
+</body>
+</html>
