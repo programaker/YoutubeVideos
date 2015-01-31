@@ -22,5 +22,5 @@
         videoThumb.attr('src', latestVideo.videoThumbnailUrl);
     };
 
-    YoutubeVideos.fetchLatestFromChannel('portadosfundos', renderVideo);
+    YoutubeVideos.fetchLatestFromChannel('SBTonline', renderVideo);
 }(window, jQuery));
