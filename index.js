@@ -1,10 +1,10 @@
 (function indexPageModule(public, $) {
-    var YouTubeVideos = public.YouTubeVideos;
+    var YoutubeVideos = public.YoutubeVideos;
     var videoLink = $('#video-link');
     var videoThumb = $('#video-thumb');
     
     function renderVideo(latestVideo) {
-        YouTubeVideos.displayInLightbox(videoLink, {
+        YoutubeVideos.displayInLightbox(videoLink, {
             closeBtn: false,
             padding: 0,
             maxWidth: 800,
@@ -22,5 +22,5 @@
         videoThumb.attr('src', latestVideo.videoThumbnailUrl);
     };
 
-    YouTubeVideos.fetchLatestFromChannel('portadosfundos', renderVideo);
+    YoutubeVideos.fetchLatestFromChannel('portadosfundos', renderVideo);
 }(window, jQuery));

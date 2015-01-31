@@ -41,7 +41,7 @@
     };
 
 
-    public.YouTubeVideos = {
+    public.YoutubeVideos = {
         displayInLightbox: displayVideoInFancybox,
         fetchLatestFromChannel: fetchLatestVideoFromChannel
     };
