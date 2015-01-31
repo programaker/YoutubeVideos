@@ -8,7 +8,7 @@
     };
 
     function channelVideoFeedUrl(channelName, maxResults) {
-        return 'https://gdata.youtube.com/feeds/api/users/portadosfundos/uploads?max-results='+ maxResults +'&orderby=published&v=2&alt=jsonc';
+        return 'https://gdata.youtube.com/feeds/api/users/'+ channelName +'/uploads?max-results='+ maxResults +'&orderby=published&v=2&alt=jsonc';
     };
 
     function displayVideoInFancybox(target, config) {
