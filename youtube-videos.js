@@ -7,8 +7,8 @@
         return 'http://img.youtube.com/vi/'+ videoId +'/hqdefault.jpg';
     };
 
-    function channelVideoFeedUrl(channelName) {
-        return 'https://gdata.youtube.com/feeds/api/users/portadosfundos/uploads?max-results=1&orderby=published&v=2&alt=jsonc';
+    function channelVideoFeedUrl(channelName, maxResults) {
+        return 'https://gdata.youtube.com/feeds/api/users/portadosfundos/uploads?max-results='+ maxResults +'&orderby=published&v=2&alt=jsonc';
     };
 
     function displayVideoInFancybox(target, config) {
@@ -16,23 +16,22 @@
         target.fancybox(config);
     };
 
-    function fetchLatestFromChannel(channelName, fn) {
+    function fetchLatestVideoFromChannel(channelName, fn) {
         $.ajax({
-            url: channelVideoFeedUrl(channelName),
+            url: channelVideoFeedUrl(channelName, 1),
             dataType: 'jsonp',
             jsonp: 'callback',
-            success: fetchLatestVideoFn(fn)
+            success: fetchVideoSuccessFn(fn)
         });
     };
 
-    function fetchLatestVideoFn(fn) {
+    function fetchVideoSuccessFn(fn) {
         return function fetchLatestVideo(response) {
             if (response.data && response.data.items) {
                 var items = response.data.items;
 
                 if (items.length) {
-                    var lastVideo = items[0];
-                    var videoId = lastVideo.id;
+                    var videoId = items[0].id;
                     return fn({videoUrl: videoUrl(videoId), videoThumbnailUrl: videoThumbNailUrl(videoId), error: ''});
                 }
             }
@@ -44,6 +43,6 @@
 
     public.YouTubeVideos = {
         displayInLightbox: displayVideoInFancybox,
-        fetchLatestFromChannel: fetchLatestFromChannel
+        fetchLatestFromChannel: fetchLatestVideoFromChannel
     };
 }(window, jQuery));
