@@ -3,7 +3,7 @@
         return 'http://www.youtube.com/embed/'+ videoId +'?autoplay=1';
     };
 
-    function videoThumbNailUrl(videoId) {
+    function videoThumbnailUrl(videoId) {
         return 'http://img.youtube.com/vi/'+ videoId +'/hqdefault.jpg';
     };
 
@@ -27,7 +27,7 @@
 
                 if (items.length) {
                     var videoId = items[0].id;
-                    return fn({videoUrl: videoUrl(videoId), videoThumbnailUrl: videoThumbNailUrl(videoId), error: ''});
+                    return fn({videoUrl: videoUrl(videoId), videoThumbnailUrl: videoThumbnailUrl(videoId), error: ''});
                 }
             }
 
