@@ -11,11 +11,6 @@
         return 'https://gdata.youtube.com/feeds/api/users/'+ channelName +'/uploads?max-results='+ maxResults +'&orderby=published&v=2&alt=jsonc';
     };
 
-    function displayVideoInFancybox(target, config) {
-        target.addClass('fancybox.iframe');
-        target.fancybox(config);
-    };
-
     function fetchLatestVideoFromChannel(channelName, fn) {
         $.ajax({
             url: channelVideoFeedUrl(channelName, 1),
@@ -40,9 +35,7 @@
         };
     };
 
-
     public.YoutubeVideos = {
-        displayInLightbox: displayVideoInFancybox,
         fetchLatestFromChannel: fetchLatestVideoFromChannel
     };
 }(window, jQuery));

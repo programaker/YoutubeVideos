@@ -2,9 +2,9 @@
     var YoutubeVideos = public.YoutubeVideos;
     var videoLink = $('#video-link');
     var videoThumb = $('#video-thumb');
-    
+
     function renderVideo(latestVideo) {
-        YoutubeVideos.displayInLightbox(videoLink, {
+        var fancyboxConfig = {
             closeBtn: false,
             padding: 0,
             maxWidth: 800,
@@ -16,11 +16,15 @@
             closeClick: false,
             openEffect: 'none',
             closeEffect: 'none'
-        });
+        };
+
+        videoLink
+            .attr('href', latestVideo.videoUrl)
+            .addClass('fancybox.iframe')
+            .fancybox(fancyboxConfig);
         
-        videoLink.attr('href', latestVideo.videoUrl);
         videoThumb.attr('src', latestVideo.videoThumbnailUrl);
     };
 
-    YoutubeVideos.fetchLatestFromChannel('SBTonline', renderVideo);
+    YoutubeVideos.fetchLatestFromChannel('scishowspace', renderVideo);
 }(window, jQuery));
