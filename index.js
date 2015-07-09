@@ -1,30 +1,30 @@
-(function indexPageModule(public, $) {
-    var YoutubeVideos = public.YoutubeVideos;
-    var videoLink = $('#video-link');
-    var videoThumb = $('#video-thumb');
+(function indexPageModule(global, $) {
+    function renderVideoFn($videoLink, $videoThumb) {
+        return function renderVideo(latestVideo) {
+            var fancyboxConfig = {
+                closeBtn: false,
+                padding: 0,
+                maxWidth: 800,
+                maxHeight: 600,
+                fitToView: false,
+                width: '70%',
+                height: '70%',
+                autoSize: false,
+                closeClick: false,
+                openEffect: 'none',
+                closeEffect: 'none'
+            };
 
-    function renderVideo(latestVideo) {
-        var fancyboxConfig = {
-            closeBtn: false,
-            padding: 0,
-            maxWidth: 800,
-            maxHeight: 600,
-            fitToView: false,
-            width: '70%',
-            height: '70%',
-            autoSize: false,
-            closeClick: false,
-            openEffect: 'none',
-            closeEffect: 'none'
+            $videoLink
+                .attr('href', latestVideo.videoUrl)
+                .addClass('fancybox.iframe')
+                .fancybox(fancyboxConfig);
+            
+            $videoThumb.attr('src', latestVideo.videoThumbnailUrl);
         };
-
-        videoLink
-            .attr('href', latestVideo.videoUrl)
-            .addClass('fancybox.iframe')
-            .fancybox(fancyboxConfig);
-        
-        videoThumb.attr('src', latestVideo.videoThumbnailUrl);
     };
 
-    YoutubeVideos.fetchLatestFromChannel('scishowspace', renderVideo);
+    var videoLink = $('#video-link');
+    var videoThumb = $('#video-thumb');
+    global.YoutubeVideos.fetchLatestFromChannel('UCEWHPFNilsT0IfQfutVzsag', renderVideoFn(videoLink, videoThumb)); //porta dos fundos
 }(window, jQuery));

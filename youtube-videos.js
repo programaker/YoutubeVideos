@@ -1,19 +1,26 @@
-(function youtubeVideosModule(public, $) {
+(function youtubeVideosModule(global, $) {
     function videoUrl(videoId) {
         return 'http://www.youtube.com/embed/'+ videoId +'?autoplay=1';
     };
 
-    function videoThumbnailUrl(videoId) {
-        return 'http://img.youtube.com/vi/'+ videoId +'/hqdefault.jpg';
-    };
+    function channelVideoSearchUrl(channelId, maxResults) {
+        var key = 'AIzaSyDQOzdypbd04-ExD90xUVPoEG2Hfx7X3X8'; //parameterize key!
 
-    function channelVideoFeedUrl(channelName, maxResults) {
-        return 'https://gdata.youtube.com/feeds/api/users/'+ channelName +'/uploads?max-results='+ maxResults +'&orderby=published&v=2&alt=jsonc';
+        var url = 'https://www.googleapis.com/youtube/v3/search'
+            + '?key=' + key 
+            + '&channelId=' + channelId 
+            + '&maxResults=' + maxResults 
+            + '&type=video' 
+            + '&order=date'
+            + '&part=snippet'
+        ; 
+
+        return url;
     };
 
     function fetchLatestVideoFromChannel(channelName, fn) {
         $.ajax({
-            url: channelVideoFeedUrl(channelName, 1),
+            url: channelVideoSearchUrl(channelName, 1),
             dataType: 'jsonp',
             jsonp: 'callback',
             success: fetchVideoSuccessFn(fn)
@@ -22,20 +29,18 @@
 
     function fetchVideoSuccessFn(fn) {
         return function fetchLatestVideo(response) {
-            if (response.data && response.data.items) {
-                var items = response.data.items;
-
-                if (items.length) {
-                    var videoId = items[0].id;
-                    return fn({videoUrl: videoUrl(videoId), videoThumbnailUrl: videoThumbnailUrl(videoId), error: ''});
-                }
+            if (response && response.items && response.items.length) {
+                var video = response.items[0];
+                var videoId = video.id.videoId;
+                var videoThumbnailUrl = video.snippet.thumbnails.high.url;
+                return fn({videoUrl: videoUrl(videoId), videoThumbnailUrl: videoThumbnailUrl, error: ''});
             }
 
             return fn({videoUrl: '', videoThumbnailUrl: '', error: 'No response'});
         };
     };
 
-    public.YoutubeVideos = {
+    global.YoutubeVideos = {
         fetchLatestFromChannel: fetchLatestVideoFromChannel
     };
 }(window, jQuery));
