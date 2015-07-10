@@ -26,5 +26,8 @@
 
     var videoLink = $('#video-link');
     var videoThumb = $('#video-thumb');
-    global.YoutubeVideos.fetchLatestFromChannel('UCEWHPFNilsT0IfQfutVzsag', renderVideoFn(videoLink, videoThumb)); //porta dos fundos
+    
+    global.YoutubeVideos.fetchLatestFromChannel(
+        'UCEWHPFNilsT0IfQfutVzsag', //porta dos fundos
+        renderVideoFn(videoLink, videoThumb)); 
 }(window, jQuery));
