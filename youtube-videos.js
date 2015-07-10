@@ -4,23 +4,21 @@
     };
 
     function channelVideoSearchUrl(channelId, maxResults) {
-        var key = 'AIzaSyDQOzdypbd04-ExD90xUVPoEG2Hfx7X3X8'; //parameterize key!
-
         var url = 'https://www.googleapis.com/youtube/v3/search'
-            + '?key=' + key 
-            + '&channelId=' + channelId 
-            + '&maxResults=' + maxResults 
+            + '?key=AIzaSyDQOzdypbd04-ExD90xUVPoEG2Hfx7X3X8'
             + '&type=video' 
             + '&order=date'
             + '&part=snippet'
+            + '&channelId=' + channelId 
+            + '&maxResults=' + maxResults 
         ; 
 
         return url;
     };
 
-    function fetchLatestVideoFromChannel(channelName, fn) {
+    function fetchLatestVideoFromChannel(channelId, fn) {
         $.ajax({
-            url: channelVideoSearchUrl(channelName, 1),
+            url: channelVideoSearchUrl(channelId, 1),
             dataType: 'jsonp',
             jsonp: 'callback',
             success: fetchVideoSuccessFn(fn)
