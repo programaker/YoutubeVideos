@@ -14,15 +14,22 @@
     //available globally through 'window'
     
     window.YoutubeVideos = {
-        fetchLatestFromChannel: fetchLatestVideoFromChannel
+        fetchLatestVideoFromChannel: fetchLatestVideoFromChannel,
+        fetchLastVideosFromChannel: fetchLastVideosFromChannel
     };    
 
 
     //private implementation details after
 
     function fetchLatestVideoFromChannel(channelId, fn) {
+        fetchLastVideosFromChannel(channelId, 1, function singleVideoResponse(videos) {
+            fn(videos[0]);
+        });
+    }
+
+    function fetchLastVideosFromChannel(channelId, ammount, fn) {
         $.ajax({
-            url: channelVideoSearchUrl(channelId, 1),
+            url: channelVideoSearchUrl(channelId, ammount),
             dataType: 'jsonp',
             jsonp: 'callback',
             success: fetchVideoSuccessFn(fn)
@@ -42,13 +49,16 @@
     function fetchVideoSuccessFn(fn) {
         return function fetchLatestVideo(response) {
             if (response && response.items && response.items.length) {
-                var video = response.items[0];
-                var videoId = video.id.videoId;
-                var videoThumbnailUrl = video.snippet.thumbnails.high.url;
-                return fn({videoUrl: videoUrl(videoId), videoThumbnailUrl: videoThumbnailUrl, error: ''});
+                var videos = response.items.map(function toDomainVideo(video) {
+                    var videoId = video.id.videoId;
+                    var videoThumbnailUrl = video.snippet.thumbnails.high.url;
+                    return {videoUrl: videoUrl(videoId), videoThumbnailUrl: videoThumbnailUrl};
+                });
+                
+                return fn(videos);
             }
 
-            return fn({videoUrl: '', videoThumbnailUrl: '', error: 'No response'});
+            return fn([]);
         };
     }
 

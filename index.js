@@ -2,7 +2,8 @@
     'use strict';
 
     //"Porta dos Fundos" channel
-    YoutubeVideos.fetchLatestFromChannel('UCEWHPFNilsT0IfQfutVzsag', renderVideoFn($('#video-link'), $('#video-thumb'))); 
+    YoutubeVideos.fetchLatestVideoFromChannel('UCEWHPFNilsT0IfQfutVzsag', 
+        renderVideoFn($('#video-link'), $('#video-thumb'))); 
 
     function renderVideoFn(videoLink, videoThumb) {
         return function renderVideo(latestVideo) {
