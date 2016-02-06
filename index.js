@@ -1,4 +1,6 @@
 (function indexPageModule(global, $) {
+    'use strict';
+    
     function renderVideoFn($videoLink, $videoThumb) {
         return function renderVideo(latestVideo) {
             var fancyboxConfig = {
@@ -22,7 +24,7 @@
             
             $videoThumb.attr('src', latestVideo.videoThumbnailUrl);
         };
-    };
+    }
 
     var videoLink = $('#video-link');
     var videoThumb = $('#video-thumb');
