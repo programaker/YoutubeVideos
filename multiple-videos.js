@@ -28,7 +28,7 @@
     function selectVideoFn(video, selectedVideo) {
         return function selectVideo() {
             var embed = $('<iframe>', {
-                src: video.videoUrl,
+                src: YoutubeVideos.videoEmbedUrl(video.videoId),
                 width: 560, 
                 height: 315,
                 frameborder: 0,

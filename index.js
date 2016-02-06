@@ -8,7 +8,7 @@
     function renderVideoFn(videoLink, videoThumb) {
         return function renderVideo(latestVideo) {
             videoLink
-                .attr('href', latestVideo.videoUrl)
+                .attr('href', YoutubeVideos.videoEmbedUrl(latestVideo.videoId, {autoplay: 1}))
                 .addClass('fancybox.iframe')
                 .fancybox({
                     closeBtn: false,

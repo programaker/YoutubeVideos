@@ -15,7 +15,8 @@
     
     window.YoutubeVideos = {
         fetchLatestVideoFromChannel: fetchLatestVideoFromChannel,
-        fetchLastVideosFromChannel: fetchLastVideosFromChannel
+        fetchLastVideosFromChannel: fetchLastVideosFromChannel,
+        videoEmbedUrl: videoEmbedUrl
     };    
 
 
@@ -36,6 +37,22 @@
         });
     }
 
+    function videoEmbedUrl(videoId, options) {
+        var embedUrl = 'http://www.youtube.com/embed/'+ videoId;
+
+        if (options) {
+            var urlParams = [];
+            
+            for (var propertyName in options) {
+                urlParams.push(propertyName + '=' + options[propertyName]);
+            }
+
+            return embedUrl + '?' + urlParams.join('&');
+        }
+
+        return embedUrl;
+    }
+
     function channelVideoSearchUrl(channelId, maxResults) {
         return 'https://www.googleapis.com/youtube/v3/search' +
             '?key=AIzaSyDQOzdypbd04-ExD90xUVPoEG2Hfx7X3X8' +
@@ -52,7 +69,7 @@
                 var videos = response.items.map(function toDomainVideo(video) {
                     var videoId = video.id.videoId;
                     var videoThumbnailUrl = video.snippet.thumbnails.high.url;
-                    return {videoUrl: videoUrl(videoId), videoThumbnailUrl: videoThumbnailUrl};
+                    return {videoId: videoId, videoThumbnailUrl: videoThumbnailUrl};
                 });
                 
                 return fn(videos);
@@ -60,10 +77,6 @@
 
             return fn([]);
         };
-    }
-
-    function videoUrl(videoId) {
-        return 'http://www.youtube.com/embed/'+ videoId +'?autoplay=1';
     }
 
 //explicit module dependencies
