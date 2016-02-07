@@ -1,11 +1,14 @@
 (function multipleVideosPageModule($, YoutubeVideos) {
     'use strict';
 
+    var selectedVideoEl = $('#selected-video');
+
     var videoListEl = $('#video-list').on('click', 'li', 
-        selectVideoFn($('#selected-video')));
+        selectVideoFn(selectedVideoEl));
     
     $('#fetch-videos').on('click', 
-        fetchVideosFn($('#channel-id'), $('#video-amount'), renderVideosFn(videoListEl)));
+        fetchVideosFn($('#channel-id'), $('#video-amount'), 
+            renderVideosFn(videoListEl, selectedVideoEl)));
 
 
     function fetchVideosFn(channelIdEl, videoAmountEl, fn) {
@@ -17,9 +20,10 @@
         };
     }
 
-    function renderVideosFn(videoListEl) {
+    function renderVideosFn(videoListEl, selectedVideoEl) {
         return function renderVideos(lastVideos) {
             videoListEl.empty();
+            selectedVideoEl.empty();
 
             for (var i = 0, l = lastVideos.length; i < l; i++) {
                 var video = lastVideos[i];
