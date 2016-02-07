@@ -2,3 +2,9 @@
 	display: inline;
 	padding: 5px;
 }
+
+#multiple-videos #selected-video iframe {
+	width: 560px; 
+	height: 315px;
+	margin-left: 140px;
+}

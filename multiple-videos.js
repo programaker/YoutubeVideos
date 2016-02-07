@@ -2,7 +2,7 @@
     'use strict';
 
     //"Kurzgesagt – In a Nutshell" channel
-    YoutubeVideos.fetchLastVideosFromChannel('UCsXVk37bltHxD1rDPwtNM8Q', 4, 
+    YoutubeVideos.fetchLastVideosFromChannel('UCsXVk37bltHxD1rDPwtNM8Q', 6, 
         renderVideosFn($('#video-list'), $('#selected-video'))); 
 
     function renderVideosFn(videoList, selectedVideo) {
@@ -16,26 +16,29 @@
                     height: 135 
                 });
 
-                var videoItem = $('<li/>')
-                    .on('click', selectVideoFn(video, selectedVideo))
-                    .append(videoThumb);
-                
+                var videoItem = $('<li/>', {'data-vid': video.videoId}).append(videoThumb);
                 videoList.append(videoItem);
             }
+
+            videoList.on('click', 'li', selectVideoFn(selectedVideo));
         };
     }
 
-    function selectVideoFn(video, selectedVideo) {
-        return function selectVideo() {
-            var embed = $('<iframe>', {
-                src: YoutubeVideos.videoEmbedUrl(video.videoId),
-                width: 560, 
-                height: 315,
-                frameborder: 0,
-                allowfullscreen: true
-            });
+    function selectVideoFn(selectedVideo) {
+        return function selectVideo(e) {
+            var embed = selectedVideo.find('iframe');
 
-            selectedVideo.empty().append(embed);
+            if (!embed.length) {
+                embed = $('<iframe>', {
+                    frameborder: 0,
+                    allowfullscreen: true
+                });
+
+                selectedVideo.append(embed);
+            }
+
+            var videoId = e.currentTarget.getAttribute('data-vid');
+            embed.attr('src', YoutubeVideos.videoEmbedUrl(videoId));
         };
     }
 

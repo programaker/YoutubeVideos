@@ -74,8 +74,6 @@
                 
                 return fn(videos);
             }
-
-            return fn([]);
         };
     }
 
