@@ -1,44 +1,56 @@
 (function multipleVideosPageModule($, YoutubeVideos) {
     'use strict';
 
-    //"Kurzgesagt – In a Nutshell" channel
-    YoutubeVideos.fetchLastVideosFromChannel('UCsXVk37bltHxD1rDPwtNM8Q', 6, 
-        renderVideosFn($('#video-list'), $('#selected-video'))); 
+    var videoListEl = $('#video-list').on('click', 'li', 
+        selectVideoFn($('#selected-video')));
+    
+    $('#fetch-videos').on('click', 
+        fetchVideosFn($('#channel-id'), $('#video-amount'), renderVideosFn(videoListEl)));
 
-    function renderVideosFn(videoList, selectedVideo) {
+
+    function fetchVideosFn(channelIdEl, videoAmountEl, fn) {
+        return function fetchVideos() {
+            YoutubeVideos.fetchLastVideosFromChannel(
+                channelIdEl.val(), 
+                parseInt(videoAmountEl.val()), 
+                fn); 
+        };
+    }
+
+    function renderVideosFn(videoListEl) {
         return function renderVideos(lastVideos) {
+            videoListEl.empty();
+
             for (var i = 0, l = lastVideos.length; i < l; i++) {
                 var video = lastVideos[i];
 
-                var videoThumb = $('<img/>', {
+                var videoThumbEl = $('<img/>', {
                     src: video.videoThumbnailUrl,
                     width: 180,
                     height: 135 
                 });
 
-                var videoItem = $('<li/>', {'data-vid': video.videoId}).append(videoThumb);
-                videoList.append(videoItem);
+                var videoItemEl = $('<li/>', {'data-vid': video.videoId}).append(videoThumbEl);
+                videoListEl.append(videoItemEl);
             }
-
-            videoList.on('click', 'li', selectVideoFn(selectedVideo));
         };
     }
 
-    function selectVideoFn(selectedVideo) {
+    function selectVideoFn(selectedVideoEl) {
         return function selectVideo(e) {
-            var embed = selectedVideo.find('iframe');
+            var embedEl = selectedVideoEl.find('iframe');
 
-            if (!embed.length) {
-                embed = $('<iframe>', {
+            if (!embedEl.length) {
+                embedEl = $('<iframe>', {
                     frameborder: 0,
                     allowfullscreen: true
                 });
 
-                selectedVideo.append(embed);
+                selectedVideoEl.append(embedEl);
             }
 
             var videoId = e.currentTarget.getAttribute('data-vid');
-            embed.attr('src', YoutubeVideos.videoEmbedUrl(videoId));
+            embedEl.attr('src', YoutubeVideos.videoEmbedUrl(videoId));
         };
     }
 

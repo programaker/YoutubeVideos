@@ -23,14 +23,18 @@
     //private implementation details after
 
     function fetchLatestVideoFromChannel(channelId, fn) {
-        fetchLastVideosFromChannel(channelId, 1, function singleVideoResponse(videos) {
-            fn(videos[0]);
-        });
+        fetchLastVideosFromChannel(channelId, 1, singleVideoResponseFn(fn));
     }
 
-    function fetchLastVideosFromChannel(channelId, ammount, fn) {
+    function singleVideoResponseFn(fn) {
+        return function singleVideoResponse(videos) { 
+            fn(videos[0]); 
+        };
+    }
+
+    function fetchLastVideosFromChannel(channelId, amount, fn) {
         $.ajax({
-            url: channelVideoSearchUrl(channelId, ammount),
+            url: channelVideoSearchUrl(channelId, amount),
             dataType: 'jsonp',
             jsonp: 'callback',
             success: fetchVideoSuccessFn(fn)
@@ -66,14 +70,17 @@
     function fetchVideoSuccessFn(fn) {
         return function fetchLatestVideo(response) {
             if (response && response.items && response.items.length) {
-                var videos = response.items.map(function toDomainVideo(video) {
-                    var videoId = video.id.videoId;
-                    var videoThumbnailUrl = video.snippet.thumbnails.high.url;
-                    return {videoId: videoId, videoThumbnailUrl: videoThumbnailUrl};
-                });
-                
-                return fn(videos);
+                return fn(response.items.map(youtubeVideoToOurVideo));
             }
+
+            return fn([]);
+        };
+    }
+
+    function youtubeVideoToOurVideo(youtubeVideo) {
+        return {
+            videoId: youtubeVideo.id.videoId,
+            videoThumbnailUrl: youtubeVideo.snippet.thumbnails.high.url
         };
     }
 
