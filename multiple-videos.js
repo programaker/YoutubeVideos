@@ -2,29 +2,38 @@
     'use strict';
 
     var selectedVideoEl = $('#selected-video');
-
-    var videoListEl = $('#video-list').on('click', 'li', 
-        selectVideoFn(selectedVideoEl));
+    var videoListEl = $('#video-list').on('click', 'li', selectVideoFn(selectedVideoEl));
+    var errorEl = $('#error');
     
-    $('#fetch-videos').on('click', 
-        fetchVideosFn($('#channel-id'), $('#video-amount'), 
-            renderVideosFn(videoListEl, selectedVideoEl)));
+    $('#fetch-videos').on('click', fetchVideosFn(
+        $('#channel-id'), 
+        $('#video-amount'), 
+        videoListEl, 
+        selectedVideoEl, 
+        errorEl, 
+        {success: renderVideosFn(videoListEl), error: renderErrorFn(errorEl)}
+    ));
 
 
-    function fetchVideosFn(channelIdEl, videoAmountEl, fn) {
+    function fetchVideosFn(channelIdEl, videoAmountEl, videoListEl, selectedVideoEl, errorEl, fns) {
         return function fetchVideos() {
+            emptyElements(videoListEl, selectedVideoEl, errorEl);
+
             YoutubeVideos.fetchLastVideosFromChannel(
                 channelIdEl.val(), 
                 parseInt(videoAmountEl.val()), 
-                fn); 
+                fns); 
         };
     }
 
-    function renderVideosFn(videoListEl, selectedVideoEl) {
-        return function renderVideos(lastVideos) {
-            videoListEl.empty();
-            selectedVideoEl.empty();
+    function emptyElements(videoListEl, selectedVideoEl, errorEl) {
+        videoListEl.empty();
+        selectedVideoEl.empty();
+        errorEl.empty();
+    }
 
+    function renderVideosFn(videoListEl) {
+        return function renderVideos(lastVideos) {
             for (var i = 0, l = lastVideos.length; i < l; i++) {
                 var video = lastVideos[i];
 
@@ -37,6 +46,12 @@
                 var videoItemEl = $('<li/>', {'data-vid': video.videoId}).append(videoThumbEl);
                 videoListEl.append(videoItemEl);
             }
+        };
+    }
+
+    function renderErrorFn(errorEl) {
+        return function renderError(error) {
+            errorEl.text(error.message);
         };
     }
 

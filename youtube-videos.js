@@ -22,8 +22,11 @@
 
     //private implementation details after
 
-    function fetchLatestVideoFromChannel(channelId, fn) {
-        fetchLastVideosFromChannel(channelId, 1, singleVideoResponseFn(fn));
+    function fetchLatestVideoFromChannel(channelId, fns) {
+        fetchLastVideosFromChannel(channelId, 1, {
+            success: singleVideoResponseFn(fns.success),
+            error: fns.error
+        });
     }
 
     function singleVideoResponseFn(fn) {
@@ -32,12 +35,13 @@
         };
     }
 
-    function fetchLastVideosFromChannel(channelId, amount, fn) {
+    function fetchLastVideosFromChannel(channelId, amount, fns) {
         $.ajax({
             url: channelVideoSearchUrl(channelId, amount),
             dataType: 'jsonp',
             jsonp: 'callback',
-            success: fetchVideoSuccessFn(fn)
+            success: fetchVideoSuccessFn(fns),
+            error: fetchVideoErrorFn(fns.error)
         });
     }
 
@@ -67,13 +71,25 @@
             '&maxResults=' + maxResults; 
     }
 
-    function fetchVideoSuccessFn(fn) {
-        return function fetchLatestVideo(response) {
-            if (response && response.items && response.items.length) {
-                return fn(response.items.map(youtubeVideoToOurVideo));
+    function fetchVideoSuccessFn(fns) {
+        return function handleSuccess(response) {
+            if (response.error && fns.error) {
+                fns.error({message: response.error.message});
             }
+            else if (response.items && response.items.length) {
+                fns.success(response.items.map(youtubeVideoToOurVideo));
+            }
+            else {
+                fns.success([]);
+            }
+        };
+    }
 
-            return fn([]);
+    function fetchVideoErrorFn(errorFn) {
+        return function handleError(jqXHR, textStatus, errorThrown) {
+            if (errorFn) {
+                errorFn({message: errorThrown});
+            }
         };
     }
 

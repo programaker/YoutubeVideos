@@ -10,6 +10,10 @@
     width: 75px;
 }
 
+#multiple-videos #fields #error {
+    color: red;
+}
+
 #multiple-videos #video-list li {
     display: inline;
     padding: 5px;
