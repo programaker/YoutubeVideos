@@ -1,0 +1,26 @@
+#multiple-videos #fields {
+    margin-left: 45px;
+}
+
+#multiple-videos #fields #channel-id {
+    width: 250px;
+}
+
+#multiple-videos #fields #video-amount {
+    width: 75px;
+}
+
+#multiple-videos #fields #error {
+    color: red;
+}
+
+#multiple-videos #video-list li {
+    display: inline;
+    padding: 5px;
+}
+
+#multiple-videos #selected-video iframe {
+    width: 560px; 
+    height: 315px;
+    margin-left: 45px;
+}

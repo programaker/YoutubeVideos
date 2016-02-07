@@ -14,19 +14,51 @@
     //available globally through 'window'
     
     window.YoutubeVideos = {
-        fetchLatestFromChannel: fetchLatestVideoFromChannel
+        fetchLatestVideoFromChannel: fetchLatestVideoFromChannel,
+        fetchLastVideosFromChannel: fetchLastVideosFromChannel,
+        videoEmbedUrl: videoEmbedUrl
     };    
 
 
     //private implementation details after
 
-    function fetchLatestVideoFromChannel(channelId, fn) {
+    function fetchLatestVideoFromChannel(channelId, fns) {
+        fetchLastVideosFromChannel(channelId, 1, {
+            success: singleVideoResponseFn(fns.success),
+            error: fns.error
+        });
+    }
+
+    function singleVideoResponseFn(fn) {
+        return function singleVideoResponse(videos) { 
+            fn(videos[0]); 
+        };
+    }
+
+    function fetchLastVideosFromChannel(channelId, amount, fns) {
         $.ajax({
-            url: channelVideoSearchUrl(channelId, 1),
+            url: channelVideoSearchUrl(channelId, amount),
             dataType: 'jsonp',
             jsonp: 'callback',
-            success: fetchVideoSuccessFn(fn)
+            success: fetchVideoSuccessFn(fns),
+            error: fetchVideoErrorFn(fns.error)
         });
+    }
+
+    function videoEmbedUrl(videoId, options) {
+        var embedUrl = 'http://www.youtube.com/embed/'+ videoId;
+
+        if (options) {
+            var urlParams = [];
+            
+            for (var propertyName in options) {
+                urlParams.push(propertyName + '=' + options[propertyName]);
+            }
+
+            return embedUrl + '?' + urlParams.join('&');
+        }
+
+        return embedUrl;
     }
 
     function channelVideoSearchUrl(channelId, maxResults) {
@@ -39,21 +71,33 @@
             '&maxResults=' + maxResults; 
     }
 
-    function fetchVideoSuccessFn(fn) {
-        return function fetchLatestVideo(response) {
-            if (response && response.items && response.items.length) {
-                var video = response.items[0];
-                var videoId = video.id.videoId;
-                var videoThumbnailUrl = video.snippet.thumbnails.high.url;
-                return fn({videoUrl: videoUrl(videoId), videoThumbnailUrl: videoThumbnailUrl, error: ''});
+    function fetchVideoSuccessFn(fns) {
+        return function handleSuccess(response) {
+            if (response.error && fns.error) {
+                fns.error({message: response.error.message});
             }
-
-            return fn({videoUrl: '', videoThumbnailUrl: '', error: 'No response'});
+            else if (response.items && response.items.length) {
+                fns.success(response.items.map(youtubeVideoToOurVideo));
+            }
+            else {
+                fns.success([]);
+            }
         };
     }
 
-    function videoUrl(videoId) {
-        return 'http://www.youtube.com/embed/'+ videoId +'?autoplay=1';
+    function fetchVideoErrorFn(errorFn) {
+        return function handleError(jqXHR, textStatus, errorThrown) {
+            if (errorFn) {
+                errorFn({message: errorThrown});
+            }
+        };
+    }
+
+    function youtubeVideoToOurVideo(youtubeVideo) {
+        return {
+            videoId: youtubeVideo.id.videoId,
+            videoThumbnailUrl: youtubeVideo.snippet.thumbnails.high.url
+        };
     }
 
 //explicit module dependencies

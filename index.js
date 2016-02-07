@@ -2,12 +2,14 @@
     'use strict';
 
     //"Porta dos Fundos" channel
-    YoutubeVideos.fetchLatestFromChannel('UCEWHPFNilsT0IfQfutVzsag', renderVideoFn($('#video-link'), $('#video-thumb'))); 
+    YoutubeVideos.fetchLatestVideoFromChannel('UCEWHPFNilsT0IfQfutVzsag', {
+        success: renderVideoFn($('#video-link'), $('#video-thumb'))
+    }); 
 
-    function renderVideoFn(videoLink, videoThumb) {
+    function renderVideoFn(videoLinkEl, videoThumbEl) {
         return function renderVideo(latestVideo) {
-            videoLink
-                .attr('href', latestVideo.videoUrl)
+            videoLinkEl
+                .attr('href', YoutubeVideos.videoEmbedUrl(latestVideo.videoId, {autoplay: 1}))
                 .addClass('fancybox.iframe')
                 .fancybox({
                     closeBtn: false,
@@ -23,7 +25,7 @@
                     closeEffect: 'none'
                 });
             
-            videoThumb.attr('src', latestVideo.videoThumbnailUrl);
+            videoThumbEl.attr('src', latestVideo.videoThumbnailUrl);
         };
     }
 
