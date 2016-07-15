@@ -1,26 +1,10 @@
-//closure that make possible: 
-//-> private functions|state|objects|etc
-//-> local 'use strict' directive
-//-> turning module dependencies explicit
-//
-//a negative point: it's a function with side effects (changes window state)
-//but, since it's just a self-executing function that will not be available
-//after module setup, it seems ok... it works like a 'scope', not a true function 
-(function youtubeVideosModule($) {
-    'use strict';
-
-    //high-level module definition first 
-    //it's the module's public interface (Revealing Module pattern)
-    //available globally through 'window'
-    
-    window.YoutubeVideos = {
+function YoutubeVideos($) {
+    var YoutubeVideosModule = {
         fetchLatestVideoFromChannel: fetchLatestVideoFromChannel,
         fetchLastVideosFromChannel: fetchLastVideosFromChannel,
         videoEmbedUrl: videoEmbedUrl
     };    
 
-
-    //private implementation details after
 
     function fetchLatestVideoFromChannel(channelId, fns) {
         fetchLastVideosFromChannel(channelId, 1, {
@@ -100,6 +84,6 @@
         };
     }
 
-//explicit module dependencies
-//prefixing with 'window.' just to avoid annoying JsHint warnings
-}(window.jQuery));
+
+    return YoutubeVideosModule;
+}

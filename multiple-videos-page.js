@@ -1,11 +1,12 @@
-(function multipleVideosPageModule($, YoutubeVideos) {
-    'use strict';
+(function MultipleVideosPage($, YoutubeVideos) {
+    var youtube = YoutubeVideos($);
 
     var selectedVideoEl = $('#selected-video');
-    var videoListEl = $('#video-list').on('click', 'li', selectVideoFn(selectedVideoEl));
+    var videoListEl = $('#video-list').on('click', 'li', selectVideoFn(youtube, selectedVideoEl));
     var errorEl = $('#error');
     
     $('#fetch-videos').on('click', fetchVideosFn(
+        youtube,
         $('#channel-id'), 
         $('#video-amount'), 
         videoListEl, 
@@ -15,11 +16,11 @@
     ));
 
 
-    function fetchVideosFn(channelIdEl, videoAmountEl, videoListEl, selectedVideoEl, errorEl, fns) {
+    function fetchVideosFn(youtube, channelIdEl, videoAmountEl, videoListEl, selectedVideoEl, errorEl, fns) {
         return function fetchVideos() {
             emptyElements(videoListEl, selectedVideoEl, errorEl);
 
-            YoutubeVideos.fetchLastVideosFromChannel(
+            youtube.fetchLastVideosFromChannel(
                 channelIdEl.val(), 
                 parseInt(videoAmountEl.val()), 
                 fns); 
@@ -55,7 +56,7 @@
         };
     }
 
-    function selectVideoFn(selectedVideoEl) {
+    function selectVideoFn(youtube, selectedVideoEl) {
         return function selectVideo(e) {
             var embedEl = selectedVideoEl.find('iframe');
 
@@ -69,7 +70,7 @@
             }
 
             var videoId = e.currentTarget.getAttribute('data-vid');
-            embedEl.attr('src', YoutubeVideos.videoEmbedUrl(videoId));
+            embedEl.attr('src', youtube.videoEmbedUrl(videoId));
         };
     }
 
