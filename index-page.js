@@ -1,13 +1,18 @@
 (function IndexPage($, YoutubeVideos) {
     var youtube = YoutubeVideos($);
 
+    var domElements = {
+        videoLink: $('#video-link'),
+        videoThumb: $('#video-thumb')
+    }
+
     youtube.fetchLatestVideoFromChannel('UCEWHPFNilsT0IfQfutVzsag', {
-        success: renderVideoFn(youtube, $('#video-link'), $('#video-thumb'))
+        success: renderVideoFn(youtube, domElements)
     }); 
 
-    function renderVideoFn(youtube, videoLinkEl, videoThumbEl) {
+    function renderVideoFn(youtube, domElements) {
         return function renderVideo(latestVideo) {
-            videoLinkEl
+            domElements.videoLink
                 .attr('href', youtube.videoEmbedUrl(latestVideo.videoId, {autoplay: 1}))
                 .addClass('fancybox.iframe')
                 .fancybox({
@@ -24,7 +29,7 @@
                     closeEffect: 'none'
                 });
             
-            videoThumbEl.attr('src', latestVideo.videoThumbnailUrl);
+            domElements.videoThumb.attr('src', latestVideo.videoThumbnailUrl);
         };
     }
 

@@ -1,22 +1,30 @@
 (function MultipleVideosPage($, YoutubeVideos) {
     var youtube = YoutubeVideos($);
 
-    var selectedVideoEl = $('#selected-video');
-    var videoListEl = $('#video-list').on('click', 'li', selectVideoFn(youtube, selectedVideoEl));
-    var errorEl = $('#error');
+    var domElements = {
+        selectedVideoEl: $('#selected-video'),
+        videoListEl: $('#video-list'),
+        errorEl: $('#error'),
+        fetchVideosEl: $('#fetch-videos'),
+        channelIdEl: $('#channel-id'),
+        videoAmountEl: $('#video-amount')
+    };
+
+    domElements.videoListEl.on('click', 'li', selectVideoFn(youtube, domElements.selectedVideoEl));
     
-    $('#fetch-videos').on('click', fetchVideosFn(
-        youtube,
-        $('#channel-id'), 
-        $('#video-amount'), 
-        videoListEl, 
-        selectedVideoEl, 
-        errorEl, 
-        {success: renderVideosFn(videoListEl), error: renderErrorFn(errorEl)}
-    ));
+    domElements.fetchVideosEl.on('click', fetchVideosFn(youtube, domElements, {
+        success: renderVideosFn(domElements.videoListEl), 
+        error: renderErrorFn(domElements.errorEl)
+    }));
 
 
-    function fetchVideosFn(youtube, channelIdEl, videoAmountEl, videoListEl, selectedVideoEl, errorEl, fns) {
+    function fetchVideosFn(youtube, domElements, fns) {
+        var channelIdEl = domElements.channelIdEl;
+        var videoAmountEl = domElements.videoAmountEl;
+        var videoListEl = domElements.videoListEl;
+        var selectedVideoEl = domElements.selectedVideoEl;
+        var errorEl = domElements.errorEl;
+
         return function fetchVideos() {
             emptyElements(videoListEl, selectedVideoEl, errorEl);
 
