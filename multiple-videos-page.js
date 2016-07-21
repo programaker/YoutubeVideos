@@ -1,5 +1,5 @@
-(function MultipleVideosPage($, YoutubeVideos) {
-    var youtube = YoutubeVideos($);
+(function MultipleVideosPage() {
+    var youtube = YoutubeVideos();
 
     var domElements = {
         selectedVideoEl: $('#selected-video'),
@@ -81,5 +81,4 @@
             embedEl.attr('src', youtube.videoEmbedUrl(videoId));
         };
     }
-
-}(window.jQuery, window.YoutubeVideos));
+}());

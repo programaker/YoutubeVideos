@@ -1,4 +1,4 @@
-function YoutubeVideos($) {
+function YoutubeVideos() {
     var YoutubeVideosModule = {
         fetchLatestVideoFromChannel: fetchLatestVideoFromChannel,
         fetchLastVideosFromChannel: fetchLastVideosFromChannel,

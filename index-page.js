@@ -1,5 +1,5 @@
-(function IndexPage($, YoutubeVideos) {
-    var youtube = YoutubeVideos($);
+(function IndexPage() {
+    var youtube = YoutubeVideos();
 
     var domElements = {
         videoLink: $('#video-link'),
@@ -32,5 +32,4 @@
             domElements.videoThumb.attr('src', latestVideo.videoThumbnailUrl);
         };
     }
-
-}(window.jQuery, window.YoutubeVideos));
+}());
