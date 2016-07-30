@@ -1,5 +1,5 @@
-function YoutubeVideos() {
-    var YoutubeVideosModule = {
+(function youtube_videos_js() {
+    window.YoutubeVideos = {
         fetchLatestVideoFromChannel: fetchLatestVideoFromChannel,
         fetchLastVideosFromChannel: fetchLastVideosFromChannel,
         videoEmbedUrl: videoEmbedUrl
@@ -83,7 +83,4 @@ function YoutubeVideos() {
             videoThumbnailUrl: youtubeVideo.snippet.thumbnails.high.url
         };
     }
-
-
-    return YoutubeVideosModule;
-}
+}());

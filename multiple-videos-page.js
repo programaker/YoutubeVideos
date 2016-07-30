@@ -1,6 +1,4 @@
-(function MultipleVideosPage() {
-    var youtube = YoutubeVideos();
-
+(function multiple_videos_page_js() {
     var domElements = {
         selectedVideoEl: $('#selected-video'),
         videoListEl: $('#video-list'),
@@ -10,15 +8,15 @@
         videoAmountEl: $('#video-amount')
     };
 
-    domElements.videoListEl.on('click', 'li', selectVideoFn(youtube, domElements.selectedVideoEl));
+    domElements.videoListEl.on('click', 'li', selectVideoFn(domElements.selectedVideoEl));
     
-    domElements.fetchVideosEl.on('click', fetchVideosFn(youtube, domElements, {
+    domElements.fetchVideosEl.on('click', fetchVideosFn(domElements, {
         success: renderVideosFn(domElements.videoListEl), 
         error: renderErrorFn(domElements.errorEl)
     }));
 
 
-    function fetchVideosFn(youtube, domElements, fns) {
+    function fetchVideosFn(domElements, fns) {
         var channelIdEl = domElements.channelIdEl;
         var videoAmountEl = domElements.videoAmountEl;
         var videoListEl = domElements.videoListEl;
@@ -28,7 +26,7 @@
         return function fetchVideos() {
             emptyElements(videoListEl, selectedVideoEl, errorEl);
 
-            youtube.fetchLastVideosFromChannel(
+            YoutubeVideos.fetchLastVideosFromChannel(
                 channelIdEl.val(), 
                 parseInt(videoAmountEl.val()), 
                 fns); 
@@ -64,7 +62,7 @@
         };
     }
 
-    function selectVideoFn(youtube, selectedVideoEl) {
+    function selectVideoFn(selectedVideoEl) {
         return function selectVideo(e) {
             var embedEl = selectedVideoEl.find('iframe');
 
@@ -78,7 +76,7 @@
             }
 
             var videoId = e.currentTarget.getAttribute('data-vid');
-            embedEl.attr('src', youtube.videoEmbedUrl(videoId));
+            embedEl.attr('src', YoutubeVideos.videoEmbedUrl(videoId));
         };
     }
 }());

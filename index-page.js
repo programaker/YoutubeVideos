@@ -1,19 +1,17 @@
-(function IndexPage() {
-    var youtube = YoutubeVideos();
-
+(function index_page_js() {
     var domElements = {
         videoLink: $('#video-link'),
         videoThumb: $('#video-thumb')
     }
 
-    youtube.fetchLatestVideoFromChannel('UCEWHPFNilsT0IfQfutVzsag', {
-        success: renderVideoFn(youtube, domElements)
+    YoutubeVideos.fetchLatestVideoFromChannel('UCEWHPFNilsT0IfQfutVzsag', {
+        success: renderVideoFn(domElements)
     }); 
 
-    function renderVideoFn(youtube, domElements) {
+    function renderVideoFn(domElements) {
         return function renderVideo(latestVideo) {
             domElements.videoLink
-                .attr('href', youtube.videoEmbedUrl(latestVideo.videoId, {autoplay: 1}))
+                .attr('href', YoutubeVideos.videoEmbedUrl(latestVideo.videoId, {autoplay: 1}))
                 .addClass('fancybox.iframe')
                 .fancybox({
                     closeBtn: false,
