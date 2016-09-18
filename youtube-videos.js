@@ -8,15 +8,13 @@
 
     function fetchLatestVideoFromChannel(channelId, fns) {
         fetchLastVideosFromChannel(channelId, 1, {
-            success: singleVideoResponseFn(fns.success),
+            success: singleVideoResponse.bind(null, fns.success),
             error: fns.error
         });
     }
 
-    function singleVideoResponseFn(fn) {
-        return function singleVideoResponse(videos) { 
-            fn(videos[0]); 
-        };
+    function singleVideoResponse(fn, videos) {
+        fn(videos[0]); 
     }
 
     function fetchLastVideosFromChannel(channelId, amount, fns) {
@@ -24,8 +22,8 @@
             url: channelVideoSearchUrl(channelId, amount),
             dataType: 'jsonp',
             jsonp: 'callback',
-            success: fetchVideoSuccessFn(fns),
-            error: fetchVideoErrorFn(fns.error)
+            success: fetchVideoSuccess.bind(null, fns),
+            error: fetchVideoError.bind(null, fns.error)
         });
     }
 
@@ -55,26 +53,20 @@
             '&maxResults=' + maxResults; 
     }
 
-    function fetchVideoSuccessFn(fns) {
-        return function handleSuccess(response) {
-            if (response.error && fns.error) {
-                fns.error({message: response.error.message});
-            }
-            else if (response.items && response.items.length) {
-                fns.success(response.items.map(youtubeVideoToOurVideo));
-            }
-            else {
-                fns.success([]);
-            }
-        };
+    function fetchVideoSuccess(fns, response) {
+        if (response.error && fns.error) {
+            fns.error({message: response.error.message});
+        }
+        else if (response.items && response.items.length) {
+            fns.success(response.items.map(youtubeVideoToOurVideo));
+        }
+        else {
+            fns.success([]);
+        }
     }
 
-    function fetchVideoErrorFn(errorFn) {
-        return function handleError(jqXHR, textStatus, errorThrown) {
-            if (errorFn) {
-                errorFn({message: errorThrown});
-            }
-        };
+    function fetchVideoError(errorFn, jqXHR, textStatus, errorThrown) {
+        errorFn && errorFn({message: errorThrown});
     }
 
     function youtubeVideoToOurVideo(youtubeVideo) {
