@@ -8,27 +8,23 @@
         videoAmountEl: $('#video-amount')
     };
 
-    domElements.videoListEl.on('click', 'li', selectVideo.bind(null, domElements.selectedVideoEl));
+    domElements.videoListEl.on('click', 'li', selectVideoFn(domElements.selectedVideoEl));
     
-    domElements.fetchVideosEl.on('click', fetchVideos.bind(null, domElements, {
-        success: renderVideos.bind(null, domElements.videoListEl), 
-        error: renderError.bind(null, domElements.errorEl)
+    domElements.fetchVideosEl.on('click', fetchVideosFn(domElements, {
+        success: renderVideosFn(domElements.videoListEl), 
+        error: renderErrorFn(domElements.errorEl)
     }));
 
 
-    function fetchVideos(domElements, fns) {
-        var channelIdEl = domElements.channelIdEl;
-        var videoAmountEl = domElements.videoAmountEl;
-        var videoListEl = domElements.videoListEl;
-        var selectedVideoEl = domElements.selectedVideoEl;
-        var errorEl = domElements.errorEl;
+    function fetchVideosFn(domElements, fns) {
+        return function fetchVideos() {
+            emptyElements(domElements.videoListEl, domElements.selectedVideoEl, domElements.errorEl);
 
-        emptyElements(videoListEl, selectedVideoEl, errorEl);
-
-        YoutubeVideos.fetchLastVideosFromChannel(
-            channelIdEl.val(), 
-            parseInt(videoAmountEl.val()), 
-            fns);
+            YoutubeVideos.fetchLastVideosFromChannel(
+                domElements.channelIdEl.val(), 
+                parseInt(domElements.videoAmountEl.val()), 
+                fns); 
+        };
     }
 
     function emptyElements(videoListEl, selectedVideoEl, errorEl) {
@@ -37,38 +33,44 @@
         errorEl.empty();
     }
 
-    function renderVideos(videoListEl, lastVideos) {
-        for (var i = 0, l = lastVideos.length; i < l; i++) {
-            var video = lastVideos[i];
+    function renderVideosFn(videoListEl) {
+        return function renderVideos(lastVideos) {
+            for (var i = 0, l = lastVideos.length; i < l; i++) {
+                var video = lastVideos[i];
 
-            var videoThumbEl = $('<img/>', {
-                src: video.videoThumbnailUrl,
-                width: 180,
-                height: 135 
-            });
+                var videoThumbEl = $('<img/>', {
+                    src: video.videoThumbnailUrl,
+                    width: 180,
+                    height: 135 
+                });
 
-            var videoItemEl = $('<li/>', {'data-vid': video.videoId}).append(videoThumbEl);
-            videoListEl.append(videoItemEl);
-        }
+                var videoItemEl = $('<li/>', {'data-vid': video.videoId}).append(videoThumbEl);
+                videoListEl.append(videoItemEl);
+            }
+        };
     }
 
-    function renderError(errorEl, error) {
-        errorEl.text(error.message);
+    function renderErrorFn(errorEl) {
+        return function renderError(error) {
+            errorEl.text(error.message);
+        };
     }
 
-    function selectVideo(selectedVideoEl, e) {
-        var embedEl = selectedVideoEl.find('iframe');
+    function selectVideoFn(selectedVideoEl) {
+        return function selectVideo(e) {
+            var embedEl = selectedVideoEl.find('iframe');
 
-        if (!embedEl.length) {
-            embedEl = $('<iframe>', {
-                frameborder: 0,
-                allowfullscreen: true
-            });
+            if (!embedEl.length) {
+                embedEl = $('<iframe>', {
+                    frameborder: 0,
+                    allowfullscreen: true
+                });
 
-            selectedVideoEl.append(embedEl);
-        }
+                selectedVideoEl.append(embedEl);
+            }
 
-        var videoId = e.currentTarget.getAttribute('data-vid');
-        embedEl.attr('src', YoutubeVideos.videoEmbedUrl(videoId));
+            var videoId = e.currentTarget.getAttribute('data-vid');
+            embedEl.attr('src', YoutubeVideos.videoEmbedUrl(videoId));
+        };
     }
 }());
