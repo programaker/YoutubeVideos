@@ -1,4 +1,5 @@
 (function index_page_js() {
+    
     var domElements = {
         videoLink: $('#video-link'),
         videoThumb: $('#video-thumb')
@@ -30,4 +31,5 @@
             domElements.videoThumb.attr('src', latestVideo.videoThumbnailUrl);
         };
     }
+    
 }());

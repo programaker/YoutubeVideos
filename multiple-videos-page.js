@@ -1,16 +1,17 @@
 (function multiple_videos_page_js() {
+
     var domElements = {
-        selectedVideoEl: $('#selected-video'),
-        videoListEl: $('#video-list'),
-        errorEl: $('#error'),
-        fetchVideosEl: $('#fetch-videos'),
-        channelIdEl: $('#channel-id'),
-        videoAmountEl: $('#video-amount')
+        selectedVideoEl: document.getElementById('selected-video'),
+        videoListEl: document.getElementById('video-list'),
+        errorEl: document.getElementById('error'),
+        fetchVideosEl: document.getElementById('fetch-videos'),
+        channelIdEl: document.getElementById('channel-id'),
+        videoAmountEl: document.getElementById('video-amount')
     };
 
-    domElements.videoListEl.on('click', 'li', selectVideoFn(domElements.selectedVideoEl));
+    domElements.videoListEl.addEventListener('click', selectVideoFn(domElements.selectedVideoEl));
     
-    domElements.fetchVideosEl.on('click', fetchVideosFn(domElements, {
+    domElements.fetchVideosEl.addEventListener('click', fetchVideosFn(domElements, {
         success: renderVideosFn(domElements.videoListEl), 
         error: renderErrorFn(domElements.errorEl)
     }));
@@ -21,16 +22,16 @@
             emptyElements(domElements.videoListEl, domElements.selectedVideoEl, domElements.errorEl);
 
             YoutubeVideos.fetchLastVideosFromChannel(
-                domElements.channelIdEl.val(), 
-                parseInt(domElements.videoAmountEl.val()), 
+                domElements.channelIdEl.value, 
+                parseInt(domElements.videoAmountEl.value), 
                 fns); 
         };
     }
 
     function emptyElements(videoListEl, selectedVideoEl, errorEl) {
-        videoListEl.empty();
-        selectedVideoEl.empty();
-        errorEl.empty();
+        videoListEl.textContent = '';
+        selectedVideoEl.textContent = '';
+        errorEl.textContent = '';
     }
 
     function renderVideosFn(videoListEl) {
@@ -38,39 +39,45 @@
             for (var i = 0, l = lastVideos.length; i < l; i++) {
                 var video = lastVideos[i];
 
-                var videoThumbEl = $('<img/>', {
-                    src: video.videoThumbnailUrl,
-                    width: 180,
-                    height: 135 
-                });
+                var videoThumbEl = document.createElement('img');
+                videoThumbEl.src = video.videoThumbnailUrl;
+                videoThumbEl.width = 180;
+                videoThumbEl.height = 135;
+                videoThumbEl.setAttribute('data-vid', video.videoId);
 
-                var videoItemEl = $('<li/>', {'data-vid': video.videoId}).append(videoThumbEl);
-                videoListEl.append(videoItemEl);
+                var videoItemEl = document.createElement('li');
+                videoItemEl.appendChild(videoThumbEl);
+
+                videoListEl.appendChild(videoItemEl);
             }
         };
     }
 
     function renderErrorFn(errorEl) {
         return function renderError(error) {
-            errorEl.text(error.message);
+            errorEl.innerText = error.message;
         };
     }
 
     function selectVideoFn(selectedVideoEl) {
         return function selectVideo(e) {
-            var embedEl = selectedVideoEl.find('iframe');
-
-            if (!embedEl.length) {
-                embedEl = $('<iframe>', {
-                    frameborder: 0,
-                    allowfullscreen: true
-                });
-
-                selectedVideoEl.append(embedEl);
+            if (e.target.tagName !== 'IMG') {
+                return;
             }
 
-            var videoId = e.currentTarget.getAttribute('data-vid');
-            embedEl.attr('src', YoutubeVideos.videoEmbedUrl(videoId));
+            var embedEls = selectedVideoEl.getElementsByTagName('iframe');
+            var embedEl = embedEls.length && embedEls[0];
+            
+            if (!embedEl) {
+                embedEl = document.createElement('iframe');
+                embedEl.frameborder = 0;
+                embedEl.allowfullscreen = true;
+                selectedVideoEl.appendChild(embedEl);
+            }
+
+            var videoId = e.target.getAttribute('data-vid');
+            embedEl.src = YoutubeVideos.videoEmbedUrl(videoId);
         };
     }
+
 }());

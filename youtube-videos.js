@@ -22,11 +22,13 @@
     function fetchLastVideosFromChannel(channelId, amount, fns) {
         var callbackName = 'fetchLastVideosFromChannel_' + (+ new Date());
         var url = channelVideoSearchUrl(channelId, amount, callbackName); 
-        window[callbackName] = fetchVideoSuccessFn(callbackName, fns);
+        window[callbackName] = fetchVideoSuccessFn(callbackName, jsonpCleanUp, fns);
 
         var scriptEl = document.createElement('script');
         scriptEl.setAttribute('id', callbackName);
         scriptEl.setAttribute('src', url);
+        scriptEl.addEventListener('error', fetchVideoErrorFn(callbackName, jsonpCleanUp, fns.error));
+        
         document.body.appendChild(scriptEl);
     }
 
@@ -57,11 +59,9 @@
             '&callback=' + callbackName; 
     }
 
-    function fetchVideoSuccessFn(callbackName, fns) {
+    function fetchVideoSuccessFn(callbackName, jsonpCleanUp, fns) {
         return function handleSuccess(response) {
-            //jsonp clean up
-            delete window[callbackName];
-            document.getElementById(callbackName).parentNode.removeChild(document.getElementById(callbackName));
+            jsonpCleanUp(callbackName);
 
             if (response.error && fns.error) {
                 fns.error({message: response.error.message});
@@ -75,12 +75,19 @@
         };
     }
 
-    function fetchVideoErrorFn(errorFn) {
+    function fetchVideoErrorFn(callbackName, jsonpCleanUp, errorFn) {
         return function handleError(jqXHR, textStatus, errorThrown) {
+            jsonpCleanUp(callbackName);
+
             if (errorFn) {
                 errorFn({message: errorThrown});
             }
         };
+    }
+
+    function jsonpCleanUp(callbackName) {
+        delete window[callbackName];
+        document.getElementById(callbackName).parentNode.removeChild(document.getElementById(callbackName));
     }
 
     function youtubeVideoToOurVideo(youtubeVideo) {
