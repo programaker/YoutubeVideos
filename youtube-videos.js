@@ -20,13 +20,14 @@
     }
 
     function fetchLastVideosFromChannel(channelId, amount, fns) {
-        $.ajax({
-            url: channelVideoSearchUrl(channelId, amount),
-            dataType: 'jsonp',
-            jsonp: 'callback',
-            success: fetchVideoSuccessFn(fns),
-            error: fetchVideoErrorFn(fns.error)
-        });
+        var callbackName = 'fetchLastVideosFromChannel_' + (+ new Date());
+        var url = channelVideoSearchUrl(channelId, amount, callbackName); 
+        window[callbackName] = fetchVideoSuccessFn(callbackName, fns);
+
+        var scriptEl = document.createElement('script');
+        scriptEl.setAttribute('id', callbackName);
+        scriptEl.setAttribute('src', url);
+        document.body.appendChild(scriptEl);
     }
 
     function videoEmbedUrl(videoId, options) {
@@ -45,18 +46,23 @@
         return embedUrl;
     }
 
-    function channelVideoSearchUrl(channelId, maxResults) {
+    function channelVideoSearchUrl(channelId, maxResults, callbackName) {
         return 'https://www.googleapis.com/youtube/v3/search' +
             '?key=AIzaSyDQOzdypbd04-ExD90xUVPoEG2Hfx7X3X8' +
             '&type=video' +
             '&order=date' +
             '&part=snippet' +
             '&channelId=' + channelId +
-            '&maxResults=' + maxResults; 
+            '&maxResults=' + maxResults +
+            '&callback=' + callbackName; 
     }
 
-    function fetchVideoSuccessFn(fns) {
+    function fetchVideoSuccessFn(callbackName, fns) {
         return function handleSuccess(response) {
+            //jsonp clean up
+            delete window[callbackName];
+            document.getElementById(callbackName).parentNode.removeChild(document.getElementById(callbackName));
+
             if (response.error && fns.error) {
                 fns.error({message: response.error.message});
             }
