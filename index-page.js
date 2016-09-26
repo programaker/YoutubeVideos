@@ -1,35 +1,17 @@
 (function index_page_js() {
     
-    var domElements = {
-        videoLink: $('#video-link'),
-        videoThumb: $('#video-thumb')
+    var videoContainerEl = document.getElementById('video-container');
+    YoutubeVideos.fetchLatestVideoFromChannel('UCkrhfwExfTZOmMY92cYkMIw', {success: renderVideo}); 
+
+    function renderVideo(latestVideo) {
+        var embedUrl = YoutubeVideos.videoEmbedUrl(latestVideo.videoId, {autoplay: 1});
+
+        var embedEl = document.createElement('iframe');
+        embedEl.frameborder = 0;
+        embedEl.allowfullscreen = true;
+        embedEl.src = embedUrl;
+        
+        videoContainerEl.appendChild(embedEl);
     }
 
-    YoutubeVideos.fetchLatestVideoFromChannel('UCEWHPFNilsT0IfQfutVzsag', {
-        success: renderVideoFn(domElements)
-    }); 
-
-    function renderVideoFn(domElements) {
-        return function renderVideo(latestVideo) {
-            domElements.videoLink
-                .attr('href', YoutubeVideos.videoEmbedUrl(latestVideo.videoId, {autoplay: 1}))
-                .addClass('fancybox.iframe')
-                .fancybox({
-                    closeBtn: false,
-                    padding: 0,
-                    maxWidth: 800,
-                    maxHeight: 600,
-                    fitToView: false,
-                    width: '70%',
-                    height: '70%',
-                    autoSize: false,
-                    closeClick: false,
-                    openEffect: 'none',
-                    closeEffect: 'none'
-                });
-            
-            domElements.videoThumb.attr('src', latestVideo.videoThumbnailUrl);
-        };
-    }
-    
 }());
