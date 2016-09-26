@@ -1,4 +1,4 @@
-(function index_page_js() {
+(function single_video_page_js() {
     
     var videoContainerEl = document.getElementById('video-container');
     YoutubeVideos.fetchLatestVideoFromChannel('UCkrhfwExfTZOmMY92cYkMIw', {success: renderVideo}); 
